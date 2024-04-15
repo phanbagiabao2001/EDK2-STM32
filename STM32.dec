@@ -1,0 +1,19 @@
+## @file
+#
+#  Copyright (c) 2016, Linaro, Ltd. All rights reserved.
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION              = 0x0001001A
+  PACKAGE_NAME                   = STM32
+  PACKAGE_GUID                   = 629F2E78-B9D0-46AE-9380-90951430CD89
+  PACKAGE_VERSION                = 1.0
+
+[Includes]
+  Include
+
+[Guids]
+  gSTM32TokenSpaceGuid = {0x8E4BA4F8, 0x0983, 0x43FC, {0xA4, 0x9E, 0xD1, 0xF3, 0xC9, 0x37, 0x11, 0xE9}}
