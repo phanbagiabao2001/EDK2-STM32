@@ -1,6 +1,7 @@
 /** @file
 # EDK Serial port lib
 #
+# Copyright (c) 2024, Phan Ba Gia Bao <phanbagiabao2001@gmail.com>
 # Copyright (c) 2018, Intel Corporation. All rights reserved.<BR>
 # Copyright (c) 2009, Apple Inc. All rights reserved.<BR>
 #
@@ -81,8 +82,6 @@ SerialPortWrite (
     }
     MmioWrite8 (USART2_BASE + 0x28, *Buffer++);
   }
-
-    MmioWrite8(0x80000000, 0xff);
 
   return NumberOfBytes;
 }

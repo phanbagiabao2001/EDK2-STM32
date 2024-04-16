@@ -51,6 +51,10 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize
 
+
+  gSTM32TokenSpaceGuid.PcdFdtBaseAddress
+  gSTM32TokenSpaceGuid.PcdFdtSize
+  gSTM32TokenSpaceGuid.PcdNvStorageEventLogSize
 [Pcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdSerialClockRate     
 

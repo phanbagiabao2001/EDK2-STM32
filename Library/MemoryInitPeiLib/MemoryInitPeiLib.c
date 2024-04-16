@@ -1,6 +1,6 @@
 /** @file
  *
- *  Copyright (c) 2017-2018, Andrey Warkentin <andrey.warkentin@gmail.com>
+ *  Copyright (c) 2024, Phan Ba Gia Bao <phanbagiabao2001@gmail.com>
  *  Copyright (c) 2011-2015, ARM Limited. All rights reserved.
  *
  *  SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -15,14 +15,13 @@
 #include <Library/HobLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
-
+#include <Library/STM32Mem.h>
 
 VOID
 BuildMemoryTypeInformationHob (
   VOID
   );
 
-/*
 STATIC
 VOID
 InitMmu (
@@ -38,7 +37,6 @@ InitMmu (
     DEBUG ((DEBUG_ERROR, "Error: Failed to enable MMU\n"));
   }
 }
-*/
 
 STATIC
 VOID
@@ -128,6 +126,37 @@ MemoryPeim (
   IN UINT64                UefiMemorySize
   )
 {
-  
+  ARM_MEMORY_REGION_DESCRIPTOR *MemoryTable;
+  STM32_MEMORY_REGION_INFO     *MemoryInfo;
+  UINTN                        Index;
+
+  // Get Virtual Memory Map from the Platform Library
+  ArmPlatformGetVirtualMemoryMap (&MemoryTable);
+
+  // Get additional info not provided by MemoryTable
+  STM32PlatformGetVirtualMemoryInfo (&MemoryInfo);
+
+  // Register each memory region
+  for (Index = 0; MemoryTable[Index].Length != 0; Index++) {
+    ASSERT (MemoryInfo[Index].Type < ARRAY_SIZE (AddRegion));
+    DEBUG ((DEBUG_INFO, "%s:\n"
+      "\tPhysicalBase: 0x%lX\n"
+      "\tVirtualBase: 0x%lX\n"
+      "\tLength: 0x%lX\n",
+      MemoryInfo[Index].Name,
+      MemoryTable[Index].PhysicalBase,
+      MemoryTable[Index].VirtualBase,
+      MemoryTable[Index].Length));
+    AddRegion[MemoryInfo[Index].Type] (&MemoryTable[Index]);
+  }
+
+  // Build Memory Allocation Hob
+  InitMmu (MemoryTable);
+
+  if (FeaturePcdGet (PcdPrePiProduceMemoryTypeInformationHob)) {
+    // Optional feature that helps prevent EFI memory map fragmentation.
+    BuildMemoryTypeInformationHob ();
+  }
+
   return EFI_SUCCESS;
 }
