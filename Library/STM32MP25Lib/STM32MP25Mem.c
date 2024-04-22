@@ -82,13 +82,15 @@ ArmPlatformGetVirtualMemoryMap (
   VirtualMemoryInfo[Index].Type             = STM32_MEM_RESERVED_REGION;
   VirtualMemoryInfo[Index++].Name           = L"FD";
 
+  DEBUG ((DEBUG_INFO, "VariablesSize: 0x%ll08X\n", VariablesSize));
+
   // Variable Volume
-  // VirtualMemoryTable[Index].PhysicalBase    = VariablesBase;
-  // VirtualMemoryTable[Index].VirtualBase     = VirtualMemoryTable[Index].PhysicalBase;
-  // VirtualMemoryTable[Index].Length          = VariablesSize;
-  // VirtualMemoryTable[Index].Attributes      = ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
-  // VirtualMemoryInfo[Index].Type             = STM32_MEM_RESERVED_REGION;
-  // VirtualMemoryInfo[Index++].Name           = L"FD Variables";
+  VirtualMemoryTable[Index].PhysicalBase    = VariablesBase;
+  VirtualMemoryTable[Index].VirtualBase     = VirtualMemoryTable[Index].PhysicalBase;
+  VirtualMemoryTable[Index].Length          = VariablesSize;
+  VirtualMemoryTable[Index].Attributes      = ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
+  VirtualMemoryInfo[Index].Type             = STM32_MEM_RUNTIME_REGION;
+  VirtualMemoryInfo[Index++].Name           = L"FD Variables";
   
   // Base System RAM
   VirtualMemoryTable[Index].PhysicalBase    = FixedPcdGet64 (PcdSystemMemoryBase);
