@@ -15,11 +15,14 @@
 #include <Library/PcdLib.h>
 #include <Library/IoLib.h>
 #include <Library/PlatformHookLib.h>
+#include <Library/DebugLib.h>
 
 
 #define USART2_BASE   0x400e0000
-#define R_UART_TDR    0x28
-#define R_UART_ISR    0x1c
+#define R_UART_ISR    0x1c  //USART interrupt and status register (USART_ISR)
+#define R_UART_ICR    0x20  //USART interrupt flag clear register (USART_ICR)
+#define R_UART_RDR    0x24  //USART receive data register (USART_RDR)
+#define R_UART_TDR    0x28  //USART transmit data register (USART_TDR)
 #define B_UART_TXE    BIT7
 
 
@@ -40,6 +43,10 @@ SerialPortInitialize (
   VOID
   )
 {
+  UINT32 val;
+  val = MmioRead32(USART2_BASE);
+  val |= 0x4;
+  MmioWrite32(USART2_BASE, val);
   //create IAC
   //MmioWrite8(0x80000000, 1);
   //SerialPortWrite("TO", 2);
@@ -78,11 +85,15 @@ SerialPortWrite (
   UINT8 *CONST  Final = &Buffer[NumberOfBytes];
   while (Buffer < Final) {
     // Wait until UART able to accept another char
-    while (!(MmioRead32 (USART2_BASE + 0x1c) & (1<<7))) {
+    while (!(MmioRead32 (USART2_BASE + R_UART_ISR) & (1<<7))) {
     }
-    MmioWrite8 (USART2_BASE + 0x28, *Buffer++);
+    MmioWrite8 (USART2_BASE + R_UART_TDR, *Buffer++);
   }
-
+  // UINTN Count;
+  // for (Count = 0; Count < NumberOfBytes; Count++, Buffer++) {
+  //   while ((MmioRead8(USART2_BASE + R_UART_ISR) & (1<<7)) == 0);
+  //   MmioWrite8(USART2_BASE + 0x28, *Buffer);
+  // }
   return NumberOfBytes;
 }
 
@@ -106,9 +117,9 @@ SerialPortRead (
 {
   UINTN Count;
   for (Count = 0; Count < NumberOfBytes; Count++, Buffer++) {
-    //while ((MmioRead32 (0x400e0000 + UARTFR) & UART_RX_EMPTY_FLAG_MASK) != 0) {
-    //}
-    *Buffer = MmioRead8 (0x4000e0000 + 0x24);
+    if((MmioRead32(USART2_BASE + R_UART_ISR) & R_UART_ICR) != 0 ){
+      *Buffer = MmioRead8 (USART2_BASE + R_UART_RDR);
+    }
   }
   return NumberOfBytes;
 }
@@ -141,22 +152,16 @@ SerialPortRead (
   @retval EFI_DEVICE_ERROR  The serial device is not functioning properly
 
 **/
-/*
+
 BOOLEAN
 EFIAPI
 SerialPortPoll (
   VOID
   )
 {
-  UINT32 LSR = UartBase(PcdGet32(PcdOmap35xxConsoleUart)) + UART_LSR_REG;
-
-  if ((MmioRead8(LSR) & UART_LSR_RX_FIFO_E_MASK) == UART_LSR_RX_FIFO_E_NOT_EMPTY) {
-    return TRUE;
-  } else {
-    return FALSE;
-  }
+  return TRUE;
 }
-*/
+
 /**
   Sets the control bits on a serial device.
 
@@ -168,7 +173,6 @@ SerialPortPoll (
 
 **/
 
-/*
 RETURN_STATUS
 EFIAPI
 SerialPortSetControl (
@@ -177,7 +181,6 @@ SerialPortSetControl (
 {
   return RETURN_UNSUPPORTED;
 }
-*/
 
 
 /**
@@ -190,16 +193,14 @@ SerialPortSetControl (
   @retval RETURN_DEVICE_ERROR   The serial device is not functioning correctly.
 
 **/
-/*
 RETURN_STATUS
 EFIAPI
 SerialPortGetControl (
-  IN UINT32 Control
+  OUT UINT32 *Control
   )
 {
   return RETURN_UNSUPPORTED;
 }
-*/
 
 /**
   Sets the baud rate, receive FIFO depth, transmit/receice time out, parity,

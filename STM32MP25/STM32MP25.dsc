@@ -104,9 +104,9 @@
   ArmSmcLib|ArmPkg/Library/ArmSmcLib/ArmSmcLib.inf
   ArmGenericTimerCounterLib|ArmPkg/Library/ArmGenericTimerPhyCounterLib/ArmGenericTimerPhyCounterLib.inf
 
-  # Dual serial port library
-  PL011UartClockLib|ArmPlatformPkg/Library/PL011UartClockLib/PL011UartClockLib.inf
-  PL011UartLib|ArmPlatformPkg/Library/PL011UartLib/PL011UartLib.inf
+  # Serial port library
+  #PL011UartClockLib|ArmPlatformPkg/Library/PL011UartClockLib/PL011UartClockLib.inf
+  #PL011UartLib|ArmPlatformPkg/Library/PL011UartLib/PL011UartLib.inf
   SerialPortLib|Platform/STM32/Library/SerialPortLib/SerialPortLib.inf
 
   # Cryptographic libraries
@@ -128,6 +128,7 @@
   #PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
 
   DebugAgentLib|MdeModulePkg/Library/DebugAgentLibNull/DebugAgentLibNull.inf
+  DebugAgentTimerLib|EmbeddedPkg/Library/DebugAgentTimerLibNull/DebugAgentTimerLibNull.inf
 
   # Flattened Device Tree (FDT) access library
   FdtLib|EmbeddedPkg/Library/FdtLib/FdtLib.inf
@@ -315,11 +316,11 @@
   # Default platform supported RFC 4646 languages: (American) English
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLangCodes|"en-US"
 
-  gEmbeddedTokenSpaceGuid.PcdInterruptBaseAddress|0x40000000
-  gArmTokenSpaceGuid.PcdArmArchTimerSecIntrNum|0x0
-  gArmTokenSpaceGuid.PcdArmArchTimerIntrNum|0x1
-  gArmTokenSpaceGuid.PcdArmArchTimerVirtIntrNum|0x3
-  gArmTokenSpaceGuid.PcdArmArchTimerHypIntrNum|0x2
+  #gEmbeddedTokenSpaceGuid.PcdInterruptBaseAddress|0x40000000
+  #gArmTokenSpaceGuid.PcdArmArchTimerSecIntrNum|29
+  #gArmTokenSpaceGuid.PcdArmArchTimerIntrNum|30
+  #gArmTokenSpaceGuid.PcdArmArchTimerVirtIntrNum|27
+  #gArmTokenSpaceGuid.PcdArmArchTimerHypIntrNum|26
 
 [LibraryClasses.common]
   ArmLib|ArmPkg/Library/ArmLib/ArmBaseLib.inf
@@ -329,10 +330,12 @@
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   UefiBootManagerLib|MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib.inf
   BootLogoLib|MdeModulePkg/Library/BootLogoLib/BootLogoLib.inf
-  PlatformBootManagerLib|Platform/RaspberryPi/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
+  PlatformBootManagerLib|Platform/STM32/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
   CustomizedDisplayLib|MdeModulePkg/Library/CustomizedDisplayLib/CustomizedDisplayLib.inf
   FileExplorerLib|MdeModulePkg/Library/FileExplorerLib/FileExplorerLib.inf
 
+[LibraryClasses.common.UEFI_DRIVER]
+  UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
 
 ################################################################################
 #
@@ -361,14 +364,39 @@
   gArmTokenSpaceGuid.PcdSystemMemoryBase|0x86000000
   gArmTokenSpaceGuid.PcdSystemMemorySize|(0x86000000 - 0x01000000)
 
-    # GIC Base Addresses
-  gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase|0x4ac00000
+  #
+  # ARM General Interrupt Controller
+  #
+  gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase|0x4ac20000
   gArmTokenSpaceGuid.PcdGicDistributorBase|0x4ac10000
   #gArmTokenSpaceGuid.PcdGicRedistributorsBase|0x300C0000
+  #gSTM32TokenSpaceGuid.PcdGicInterruptInterfaceHBase|0x4AC00104
+  #gSTM32TokenSpaceGuid.PcdGicInterruptInterfaceVBase|0x4AC0000C
+
+  #UARTs
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialUseMmio|TRUE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterStride|4
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialFifoControl|0x27
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialExtendedTxFifoSize|8
+  gEfiMdePkgTokenSpaceGuid.PcdUartDefaultBaudRate|115200
+  gEfiMdePkgTokenSpaceGuid.PcdUartDefaultReceiveFifoDepth|0
+
+  #
+  # Fixed CPU settings.
+  #
+  gSTM32TokenSpaceGuid.PcdCpuLowSpeedMHz|800
+  gSTM32TokenSpaceGuid.PcdCpuDefSpeedMHz|1500
+  gSTM32TokenSpaceGuid.PcdCpuMaxSpeedMHz|2200
 
   ## Default Terminal Type
   ## 0-PCANSI, 1-VT100, 2-VT00+, 3-UTF8, 4-TTYTERM
   gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType|4
+  
+  gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile|{ 0x21, 0xaa, 0x2c, 0x46, 0x14, 0x76, 0x03, 0x45, 0x83, 0x6e, 0x8a, 0xb6, 0xf4, 0x66, 0x23, 0x31 }
+
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"EDK2"
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetNxForStack|TRUE
   
 [PcdsPatchableInModule]
   gEfiMdeModulePkgTokenSpaceGuid.PcdSerialClockRate|500000000
@@ -376,10 +404,43 @@
 [PcdsDynamicHii.common.DEFAULT]
 
   #
+  # Clock overrides.
+  #
+  gSTM32TokenSpaceGuid.PcdCpuClock|L"CpuClock"|gConfigDxeFormSetGuid|0x0|1
+  gSTM32TokenSpaceGuid.PcdCustomCpuClock|L"CustomCpuClock"|gConfigDxeFormSetGuid|0x0|gSTM32TokenSpaceGuid.PcdCpuDefSpeedMHz
+
+  #
+  # SD-related.
+  #
+  gSTM32TokenSpaceGuid.PcdSdIsArasan|L"SdIsArasan"|gConfigDxeFormSetGuid|0x0|0
+  gSTM32TokenSpaceGuid.PcdMmcForce1Bit|L"MmcForce1Bit"|gConfigDxeFormSetGuid|0x0|0
+  gSTM32TokenSpaceGuid.PcdMmcForceDefaultSpeed|L"MmcForceDefaultSpeed"|gConfigDxeFormSetGuid|0x0|0
+  gSTM32TokenSpaceGuid.PcdMmcSdDefaultSpeedMHz|L"MmcSdDefaultSpeedMHz"|gConfigDxeFormSetGuid|0x0|25
+  gSTM32TokenSpaceGuid.PcdMmcSdHighSpeedMHz|L"MmcSdHighSpeedMHz"|gConfigDxeFormSetGuid|0x0|50
+  gSTM32TokenSpaceGuid.PcdMmcDisableMulti|L"MmcDisableMulti"|gConfigDxeFormSetGuid|0x0|0
+  gSTM32TokenSpaceGuid.PcdMmcEnableDma|L"MmcEnableDma"|gConfigDxeFormSetGuid|0x0|1
+
+  #
+  # Debug-related.
+  #
+  gSTM32TokenSpaceGuid.PcdDebugEnableJTAG|L"DebugEnableJTAG"|gConfigDxeFormSetGuid|0x0|0
+
+  #
   # Reset-related.
   #
   gSTM32TokenSpaceGuid.PcdPlatformResetDelay|L"ResetDelay"|gSTM32TokenSpaceGuid|0x0|0
 
+  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|L"Timeout"|gEfiGlobalVariableGuid|0x0|5
+  #
+  # This is silly, but by pointing SetupConXXX and ConXXX PCDs to
+  # the same variables, I can use the graphical configuration to
+  # change the mode used by ConSplitter.
+  #
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutColumn|L"Columns"|gSTM32TokenSpaceGuid|0x0|80
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|L"Columns"|gSTM32TokenSpaceGuid|0x0|80
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutRow|L"Rows"|gSTM32TokenSpaceGuid|0x0|25
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|L"Rows"|gSTM32TokenSpaceGuid|0x0|25
+  gEfiMdeModulePkgTokenSpaceGuid.PcdBootDiscoveryPolicy|L"BootDiscoveryPolicy"|gBootDiscoveryPolicyMgrFormsetGuid|0
 
 [PcdsDynamicDefault.common]
   #
@@ -402,7 +463,10 @@
   #
   # PEI Phase modules
   #
-  ArmPlatformPkg/PrePi/PeiUniCore.inf  
+  ArmPlatformPkg/PrePi/PeiUniCore.inf {
+    <LibraryClasses>
+      SerialPortLib|Platform/STM32/Library/SerialPortLib/SerialPortLib.inf
+  }
  
   #
   # DXE
@@ -449,11 +513,15 @@
   MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
   MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
- 
+  MdeModulePkg/Universal/SerialDxe/SerialDxe.inf{
+    <LibraryClasses>
+      SerialPortLib|Platform/STM32/Library/SerialPortLib/SerialPortLib.inf
+  }
   EmbeddedPkg/Drivers/ConsolePrefDxe/ConsolePrefDxe.inf
   
   MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   
+  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
   ArmPkg/Drivers/TimerDxe/TimerDxe.inf
   MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
@@ -472,12 +540,12 @@
   #
   MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
-  Platform/RaspberryPi/AcpiTables/AcpiTables.inf
+  #Platform/RaspberryPi/AcpiTables/AcpiTables.inf
 
   #
   # SMBIOS Support
   #
-  Platform/RaspberryPi/Drivers/PlatformSmbiosDxe/PlatformSmbiosDxe.inf
+  #Platform/RaspberryPi/Drivers/PlatformSmbiosDxe/PlatformSmbiosDxe.inf
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
 
   #
@@ -494,21 +562,33 @@
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
   MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
   MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
-  Platform/RaspberryPi/Drivers/LogoDxe/LogoDxe.inf
-  MdeModulePkg/Application/UiApp/UiApp.inf {
+  MdeModulePkg/Logo/LogoDxe.inf
+  MdeModulePkg/Application/UiApp/UiApp.inf{
     <LibraryClasses>
       NULL|MdeModulePkg/Library/BootDiscoveryPolicyUiLib/BootDiscoveryPolicyUiLib.inf
       NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
       NULL|MdeModulePkg/Library/BootManagerUiLib/BootManagerUiLib.inf
-      NULL|Platform/RaspberryPi/Library/PlatformUiAppLib/PlatformUiAppLib.inf
+      NULL|Platform/STM32/Library/PlatformUiAppLib/PlatformUiAppLib.inf
       NULL|MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib.inf
   }
 
+  #
+  # SCSI Bus and Disk Driver
+  #
+  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+
+ 
 
   #
   # Networking stack
   #
 !include NetworkPkg/Network.dsc.inc
+
+  #
+  # PCI Support
+  #
+  ArmPkg/Drivers/ArmPciCpuIo2Dxe/ArmPciCpuIo2Dxe.inf
 
 
 #

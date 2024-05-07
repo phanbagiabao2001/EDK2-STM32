@@ -118,8 +118,6 @@ ArmPlatformGetVirtualMemoryMap (
 
   *VirtualMemoryMap = VirtualMemoryTable;
   VirtualMemoryInfoInitialized = TRUE;
-  DEBUG ((DEBUG_INFO, "End ArmPlatformGetVirtualMemoryMap()\n"));
-
 }
 
 /**

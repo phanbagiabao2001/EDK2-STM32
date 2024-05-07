@@ -185,9 +185,9 @@ READ_LOCK_STATUS   = TRUE
   INF MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
   INF MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   INF MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
-  #INF MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
+  INF MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
   #INF Platform/RaspberryPi/Drivers/DisplayDxe/DisplayDxe.inf
-  INF EmbeddedPkg/Drivers/ConsolePrefDxe/ConsolePrefDxe.inf
+  #INF EmbeddedPkg/Drivers/ConsolePrefDxe/ConsolePrefDxe.inf
 
   INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
   INF ArmPkg/Drivers/TimerDxe/TimerDxe.inf
@@ -213,10 +213,36 @@ READ_LOCK_STATUS   = TRUE
   #
   # ACPI Support
   #
-  INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-  INF MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
-  INF RuleOverride = ACPITABLE Platform/RaspberryPi/AcpiTables/AcpiTables.inf
+  #INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  #INF MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
+  #INF RuleOverride = ACPITABLE Platform/RaspberryPi/AcpiTables/AcpiTables.inf
 
+  #
+  # SMBIOS Support
+  #
+  #INF MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+
+  #
+  # RAM Disk Support
+  #
+  #INF MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe.inf
+
+  #
+  # Bds
+  #
+  INF MdeModulePkg/Universal/BootManagerPolicyDxe/BootManagerPolicyDxe.inf
+  INF MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
+  INF MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
+  INF MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
+  INF MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
+  INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
+  #INF MdeModulePkg/Logo/LogoDxe.inf
+  INF MdeModulePkg/Application/UiApp/UiApp.inf
+
+  #
+  # PCI Support
+  #
+  INF ArmPkg/Drivers/ArmPciCpuIo2Dxe/ArmPciCpuIo2Dxe.inf
 
 [FV.FVMAIN_COMPACT]
 FvAlignment        = 16
