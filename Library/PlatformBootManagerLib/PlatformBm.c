@@ -479,14 +479,22 @@ PlatformRegisterOptionsAndKeys (
   EFI_STATUS                   Status;
   EFI_INPUT_KEY                Enter;
   EFI_INPUT_KEY                F1;
+  EFI_INPUT_KEY                F2;
   EFI_INPUT_KEY                Esc;
   EFI_BOOT_MANAGER_LOAD_OPTION BootOption;
   INTN ShellOption;
+  INTN AppOption;
 
   RemoveStaleBootOptions ();
 
+  EFI_GUID gUefiAppFileGuid = {0x76fc4abc, 0x8c53, 0x43c9, {0x88, 0x4a, 0x74, 0x77, 0x02, 0xe1, 0x8d, 0x98}};
+  // EFI_GUID gUefiAppFileGuid = {0x6987936E, 0xED34, 0x44db, {0xae, 0x97, 0x1f, 0xa5, 0xe4, 0xed, 0x21, 0x16}};
+
   ShellOption = PlatformRegisterFvBootOption (&gUefiShellFileGuid,
                   L"UEFI Shell", 0);
+  AppOption = PlatformRegisterFvBootOption(&gUefiAppFileGuid, 
+                  L"Application Test", 0);
+
   if (ShellOption != -1) {
     //
     // F1 boots Shell.
@@ -497,6 +505,15 @@ PlatformRegisterOptionsAndKeys (
     ASSERT (Status == EFI_SUCCESS || Status == EFI_ALREADY_STARTED);
   }
 
+  if (AppOption != -1) {
+    //
+    // F2 boots App.
+    //
+    F2.ScanCode = SCAN_F2;
+    F2.UnicodeChar = CHAR_NULL;
+    Status = EfiBootManagerAddKeyOptionVariable (NULL, (UINT16)AppOption, 0, &F2, NULL);
+    ASSERT (Status == EFI_SUCCESS || Status == EFI_ALREADY_STARTED);
+  }
   //
   // Register ENTER as CONTINUE key
   //

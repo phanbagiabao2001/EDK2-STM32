@@ -99,6 +99,7 @@
   ArmDisassemblerLib|ArmPkg/Library/ArmDisassemblerLib/ArmDisassemblerLib.inf
   ArmGicLib|ArmPkg/Drivers/ArmGic/ArmGicLib.inf
   ArmGicArchLib|ArmPkg/Library/ArmGicArchLib/ArmGicArchLib.inf
+  DmaLib|EmbeddedPkg/Library/NonCoherentDmaLib/NonCoherentDmaLib.inf
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
   ArmPlatformStackLib|ArmPlatformPkg/Library/ArmPlatformStackLib/ArmPlatformStackLib.inf
   ArmSmcLib|ArmPkg/Library/ArmSmcLib/ArmSmcLib.inf
@@ -147,6 +148,7 @@
   VariableFlashInfoLib|MdeModulePkg/Library/BaseVariableFlashInfoLib/BaseVariableFlashInfoLib.inf
   VariablePolicyLib|MdeModulePkg/Library/VariablePolicyLib/VariablePolicyLib.inf
   VariablePolicyHelperLib|MdeModulePkg/Library/VariablePolicyHelperLib/VariablePolicyHelperLib.inf
+  GpioLib|Silicon/Broadcom/Bcm283x/Library/GpioLib/GpioLib.inf
 
 
 [LibraryClasses.common.SEC]
@@ -300,7 +302,7 @@
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiLoaderCode|20
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiLoaderData|0
 
-  gEmbeddedTokenSpaceGuid.PcdDmaDeviceOffset|0xc0000000
+  #gEmbeddedTokenSpaceGuid.PcdDmaDeviceOffset|0xc0000000
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString|L"EDK2-DEV"
 
@@ -333,6 +335,7 @@
   PlatformBootManagerLib|Platform/STM32/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
   CustomizedDisplayLib|MdeModulePkg/Library/CustomizedDisplayLib/CustomizedDisplayLib.inf
   FileExplorerLib|MdeModulePkg/Library/FileExplorerLib/FileExplorerLib.inf
+  AcpiLib|EmbeddedPkg/Library/AcpiLib/AcpiLib.inf
 
 [LibraryClasses.common.UEFI_DRIVER]
   UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
@@ -362,7 +365,7 @@
  
     # System Memory (2GB) - Reserved Secure Memory (16MB)
   gArmTokenSpaceGuid.PcdSystemMemoryBase|0x86000000
-  gArmTokenSpaceGuid.PcdSystemMemorySize|(0x86000000 - 0x01000000)
+  gArmTokenSpaceGuid.PcdSystemMemorySize|0x10000000
 
   #
   # ARM General Interrupt Controller
@@ -398,6 +401,10 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"EDK2"
   gEfiMdeModulePkgTokenSpaceGuid.PcdSetNxForStack|TRUE
   
+  ## PL180 MMC/SD card controller
+  gSTM32TokenSpaceGuid.PcdPL180SysMciRegAddress|0x1C010048
+  gSTM32TokenSpaceGuid.PcdPL180MciBaseAddress|0x48220000
+
 [PcdsPatchableInModule]
   gEfiMdeModulePkgTokenSpaceGuid.PcdSerialClockRate|500000000
 
@@ -523,6 +530,7 @@
   
   UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
+  Platform/STM32/Drivers/ConfigDxe/ConfigDxe.inf
   ArmPkg/Drivers/TimerDxe/TimerDxe.inf
   MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
   MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
@@ -573,17 +581,30 @@
   }
 
   #
+  # Networking stack
+  #
+!include NetworkPkg/Network.dsc.inc
+
+  #
   # SCSI Bus and Disk Driver
   #
   MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 
- 
+
 
   #
-  # Networking stack
+  # SD/MMC support
   #
-!include NetworkPkg/Network.dsc.inc
+  #MdeModulePkg/Bus/Sd/EmmcDxe/EmmcDxe.inf
+  #MdeModulePkg/Bus/Sd/SdDxe/SdDxe.inf
+  #MdeModulePkg/Bus/Pci/SdMmcPciHcDxe/SdMmcPciHcDxe.inf
+  #EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
+  #Platform/STM32/Drivers/SdHostDxe/SdHostDxe.inf
+  #Platform/STM32/Drivers/MmcDxe/MmcDxe.inf
+  
+  EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
+  Platform/STM32/Drivers/SDMmcDxe/SDMmcDxe.inf
 
   #
   # PCI Support
@@ -629,3 +650,4 @@
       UnitTestPersistenceLib|UnitTestFrameworkPkg/Library/UnitTestPersistenceLibNull/UnitTestPersistenceLibNull.inf
       UnitTestResultReportLib|UnitTestFrameworkPkg/Library/UnitTestResultReportLib/UnitTestResultReportLibConOut.inf
   }
+  Platform/STM32/STM32MP25/HelloWorld/HelloWorld.inf

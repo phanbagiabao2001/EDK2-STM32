@@ -65,6 +65,8 @@ ArmPlatformGetVirtualMemoryMap (
   // Compute the total RAM size available on this platform
   TotalMemorySize = SIZE_256MB;
   TotalMemorySize <<= (mBoardRevision >> 20) & 0x07;
+  
+  TotalMemorySize = 0x80000000;
   DEBUG ((DEBUG_INFO, "Total RAM: 0x%ll08X\n", TotalMemorySize));
 
   VirtualMemoryTable = (ARM_MEMORY_REGION_DESCRIPTOR*)AllocatePages
@@ -80,39 +82,44 @@ ArmPlatformGetVirtualMemoryMap (
   VirtualMemoryTable[Index].Length          = FixedPcdGet32 (PcdFdSize) - VariablesSize;
   VirtualMemoryTable[Index].Attributes      = ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
   VirtualMemoryInfo[Index].Type             = STM32_MEM_RESERVED_REGION;
-  VirtualMemoryInfo[Index++].Name           = L"FD";
+  VirtualMemoryInfo[Index].Name             = L"FD";
 
   DEBUG ((DEBUG_INFO, "VariablesSize: 0x%ll08X\n", VariablesSize));
 
+  Index++;
   // Variable Volume
   VirtualMemoryTable[Index].PhysicalBase    = VariablesBase;
   VirtualMemoryTable[Index].VirtualBase     = VirtualMemoryTable[Index].PhysicalBase;
   VirtualMemoryTable[Index].Length          = VariablesSize;
   VirtualMemoryTable[Index].Attributes      = ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
   VirtualMemoryInfo[Index].Type             = STM32_MEM_RUNTIME_REGION;
-  VirtualMemoryInfo[Index++].Name           = L"FD Variables";
-  
+  VirtualMemoryInfo[Index].Name           = L"FD Variables";
+
+  Index++;
   // Base System RAM
   VirtualMemoryTable[Index].PhysicalBase    = FixedPcdGet64 (PcdSystemMemoryBase);
   VirtualMemoryTable[Index].VirtualBase     = VirtualMemoryTable[Index].PhysicalBase;
-  VirtualMemoryTable[Index].Length          = FixedPcdGet64 (PcdSystemMemorySize);  // mSystemMemoryEnd + 1 - FixedPcdGet64 (PcdSystemMemoryBase);
-  VirtualMemoryTable[Index].Attributes      = ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
+  //VirtualMemoryTable[Index].Length          = FixedPcdGet64 (PcdSystemMemorySize);  // mSystemMemoryEnd + 1 - FixedPcdGet64 (PcdSystemMemoryBase);
+  VirtualMemoryTable[Index].Length          = 0x10000000;
+  VirtualMemoryTable[Index].Attributes      =  ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
   VirtualMemoryInfo[Index].Type             = STM32_MEM_BASIC_REGION;
-  VirtualMemoryInfo[Index++].Name           = L"System RAM";
- 
-  // Base SoC registers 
-  VirtualMemoryTable[Index].PhysicalBase    = 0x00000000;    
+  VirtualMemoryInfo[Index].Name           = L"System RAM";
+
+  Index++;
+  // Base SoC registers
+  VirtualMemoryTable[Index].PhysicalBase    = 0x00000000;
   VirtualMemoryTable[Index].VirtualBase     = VirtualMemoryTable[Index].PhysicalBase;
-  VirtualMemoryTable[Index].Length          = 0x80000000;  
+  VirtualMemoryTable[Index].Length          = 0x80000000;
   VirtualMemoryTable[Index].Attributes      = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
   VirtualMemoryInfo[Index].Type             = STM32_MEM_UNMAPPED_REGION;
-  VirtualMemoryInfo[Index++].Name           = L"Base SoC registers";
+  VirtualMemoryInfo[Index].Name           = L"Base SoC registers";
 
+  Index++;
   // End of Table
   VirtualMemoryTable[Index].PhysicalBase    = 0;
   VirtualMemoryTable[Index].VirtualBase     = 0;
   VirtualMemoryTable[Index].Length          = 0;
-  VirtualMemoryTable[Index++].Attributes    = (ARM_MEMORY_REGION_ATTRIBUTES)0;
+  VirtualMemoryTable[Index].Attributes    = (ARM_MEMORY_REGION_ATTRIBUTES)0;
 
   ASSERT(Index <= MAX_VIRTUAL_MEMORY_MAP_DESCRIPTORS);
 

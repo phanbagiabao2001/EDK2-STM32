@@ -191,6 +191,7 @@ READ_LOCK_STATUS   = TRUE
 
   INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
   INF ArmPkg/Drivers/TimerDxe/TimerDxe.inf
+  INF Platform/STM32/Drivers/ConfigDxe/ConfigDxe.inf
   INF MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
   INF MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 
@@ -213,10 +214,11 @@ READ_LOCK_STATUS   = TRUE
   #
   # ACPI Support
   #
-  #INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-  #INF MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
+  INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  INF MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
   #INF RuleOverride = ACPITABLE Platform/RaspberryPi/AcpiTables/AcpiTables.inf
 
+  INF Platform/STM32/STM32MP25/HelloWorld/HelloWorld.inf
   #
   # SMBIOS Support
   #
@@ -238,6 +240,12 @@ READ_LOCK_STATUS   = TRUE
   INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
   #INF MdeModulePkg/Logo/LogoDxe.inf
   INF MdeModulePkg/Application/UiApp/UiApp.inf
+
+  #
+  # SD/MMC support
+  #
+  INF EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
+  INF Platform/STM32/Drivers/SDMmcDxe/SDMmcDxe.inf
 
   #
   # PCI Support
