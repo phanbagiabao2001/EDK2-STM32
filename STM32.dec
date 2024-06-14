@@ -18,6 +18,8 @@
 
 [Protocols]
   gSTM32FirmwareProtocolGuid = { 0xA10995FC, 0xA7C6, 0x4AC3, { 0xA1, 0xFF, 0x4E, 0x3E, 0xCF, 0x73, 0xBA, 0x78}}
+  gSTM32ConfigAppliedProtocolGuid = {0X829A8C97, 0XA377, 0X45EC, {0XBD, 0XE1, 0X31, 0XBD, 0X75, 0X8A, 0XBE, 0XD9}}
+  gSTM32MmcHostProtocolGuid = {0xc8f374a3, 0x8c68, 0x41c7, {0x91, 0xec, 0x21, 0xf4, 0xf0, 0xc2, 0x8d, 0xc8}}
 
 [Guids]
   gSTM32TokenSpaceGuid = {0x8E4BA4F8, 0x0983, 0x43FC, {0xA4, 0x9E, 0xD1, 0xF3, 0xC9, 0x37, 0x11, 0xE9}}
@@ -29,7 +31,7 @@
   # Space reserved for config.txt-specced DTB follows right after the FD image
   # in STM32MP25 implementations.
   #
-  gSTM32TokenSpaceGuid.PcdFdtBaseAddress|0x001f0000|UINT32|0x00000001
+  gSTM32TokenSpaceGuid.PcdFdtBaseAddress|0x0|UINT32|0x00000001
   gSTM32TokenSpaceGuid.PcdFirmwareBlockSize|0x0|UINT32|0x00000002
   gSTM32TokenSpaceGuid.PcdNvStorageEventLogBase|0x0|UINT32|0x00000003
   gSTM32TokenSpaceGuid.PcdNvStorageEventLogSize|0x0|UINT32|0x00000004
@@ -47,6 +49,14 @@
   gSTM32TokenSpaceGuid.PcdGicPmuIrq1|0x0|UINT32|0x00000034
   gSTM32TokenSpaceGuid.PcdGicPmuIrq2|0x0|UINT32|0x00000035
   gSTM32TokenSpaceGuid.PcdGicPmuIrq3|0x0|UINT32|0x00000036
+
+  ## PL180 MCI
+  gSTM32TokenSpaceGuid.PcdPL180SysMciRegAddress|0x00000000|UINT32|0x00000037
+  gSTM32TokenSpaceGuid.PcdPL180MciBaseAddress|0x00000000|UINT32|0x00000038
+
+  # FDT
+  gSTM32TokenSpaceGuid.PcdFdtSupportOverrides|0x0|UINT32|0x00000039
+  gSTM32TokenSpaceGuid.PcdDeviceTreeName|"Unknown"|VOID*|0x00000040
 
 [PcdsFixedAtBuild, PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
   gSTM32TokenSpaceGuid.PcdCpuClock|0|UINT32|0x0000000d
@@ -70,3 +80,4 @@
   gSTM32TokenSpaceGuid.PcdUartInUse|1|UINT32|0x00000021
   gSTM32TokenSpaceGuid.PcdXhciPci|0|UINT32|0x00000022
   gSTM32TokenSpaceGuid.PcdMiniUartClockRate|0|UINT32|0x00000023
+  gSTM32TokenSpaceGuid.PcdXhciReload|0|UINT32|0x00000024

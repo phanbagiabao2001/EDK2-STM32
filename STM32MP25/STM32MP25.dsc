@@ -24,6 +24,7 @@
   BUILD_TARGETS                  = DEBUG|RELEASE|NOOPT
   SKUID_IDENTIFIER               = DEFAULT
   FLASH_DEFINITION               = Platform/STM32/$(PLATFORM_NAME)/$(PLATFORM_NAME).fdf
+  STM32_PLATFORM_FVMAIN_MODULES  = $(PLATFORM_NAME).Modules.fdf.inc
 
   #
   # Defines for default states.  These can be changed on the command line.
@@ -168,6 +169,7 @@
   MemoryAllocationLib|MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
   DxeCoreEntryPoint|MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+  DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
 
 [LibraryClasses.common.DXE_DRIVER]
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
@@ -176,14 +178,17 @@
   ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
   FileHandleLib|MdePkg/Library/UefiFileHandleLib/UefiFileHandleLib.inf
 !endif
+  DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
 
 [LibraryClasses.common.UEFI_APPLICATION]
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf 
   FileHandleLib|MdePkg/Library/UefiFileHandleLib/UefiFileHandleLib.inf
+  DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
 
 [LibraryClasses.common.UEFI_DRIVER]
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
+  DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   DebugLib|MdePkg/Library/DxeRuntimeDebugLibSerialPort/DxeRuntimeDebugLibSerialPort.inf
@@ -231,6 +236,8 @@
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport|FALSE
 
 [PcdsFixedAtBuild.common]
+  gSTM32TokenSpaceGuid.PcdDeviceTreeName|"stm32mp257f-ev1"
+
   gEfiMdePkgTokenSpaceGuid.PcdMaximumUnicodeStringLength|1000000
   gEfiMdePkgTokenSpaceGuid.PcdMaximumAsciiStringLength|1000000
   gEfiMdePkgTokenSpaceGuid.PcdMaximumLinkedListLength|1000000
@@ -432,6 +439,16 @@
   #
   gSTM32TokenSpaceGuid.PcdDebugEnableJTAG|L"DebugEnableJTAG"|gConfigDxeFormSetGuid|0x0|0
 
+
+  #
+  # Device Tree and ACPI selection.
+  #
+  # 0 - SYSTEM_TABLE_MODE_ACPI
+  # 1 - SYSTEM_TABLE_MODE_BOTH (default)
+  # 2 - SYSTEM_TABLE_MODE_DT
+  #
+  gSTM32TokenSpaceGuid.PcdSystemTableMode|L"SystemTableMode"|gConfigDxeFormSetGuid|0x0|2
+
   #
   # Reset-related.
   #
@@ -542,6 +559,10 @@
   MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   FatPkg/EnhancedFatDxe/Fat.inf
+
+  # Device Tree
+  Platform/STM32/Drivers/FdtPlatformDxe/FdtPlatformDxe.inf
+
 
   #
   # ACPI Support
